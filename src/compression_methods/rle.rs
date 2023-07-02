@@ -21,19 +21,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     =======================================================================
  */
-use std::io;
 
-mod rle;
-
-// sdsdsd
-// 
-
-fn encode()
+mod rle
 {
-    todo!()
-}
 
-fn decode()
-{
-    todo!()
 }

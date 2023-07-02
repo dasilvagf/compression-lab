@@ -22,18 +22,29 @@
     =======================================================================
  */
 use std::io;
+use std::vec;
+use std::fs::File;
+use rand::prelude::*;
 
-mod rle;
-
-// sdsdsd
-// 
-
-fn encode()
+// Generate a binary blob with just # different 4 bytes symbols
+// randomly placed in the file, so it works as a good test bed
+// for files in which RLE is a good compressor!
+pub fn gen_blob_rle(filepath : &str, filesize_bytes : i32, 
+                    symbols_count : i32 /*how many different symbols the file has*/) -> bool
 {
-    todo!()
+    // Gen symbol table
+
+    return false;
 }
 
-fn decode()
+// Generate a file using random 4 byte symbols
+pub fn gen_random_blob(filepath : &str, filesize_bytes : i32) -> bool
 {
-    todo!()
+
+    return false;
+}
+
+pub fn bin_diff(file1 : &str, file2 : &str) -> bool
+{
+    return false;
 }
