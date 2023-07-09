@@ -21,12 +21,21 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     =======================================================================
  */
+use std::env;
+use std::path;
 
 mod compression_methods;
 mod utils;
 
 fn main ()
 {
-    const FILEPATH : &str = "test/random_blob.bin";
-    utils::gen_random_blob(&FILEPATH, 1000000 /*1MB*/);
+    // Get filepath for current directory
+    let current_dir = env::current_dir();
+    assert_eq!(current_dir.is_ok(), true);
+
+    // Set filename to random_blob.bin
+    let mut filepath : path::PathBuf = current_dir.unwrap();
+    filepath.push("random_blob.bin");
+
+    assert_eq!(utils::gen_random_blob(filepath, 1000000 /*1MB*/), true);
 }

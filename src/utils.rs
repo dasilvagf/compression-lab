@@ -21,16 +21,18 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     =======================================================================
  */
-use std::io;
+use std::io::prelude::*;
 use std::vec;
+use std::path;
 use std::fs::File;
 use rand::prelude::*;
+use byteorder::{ByteOrder, LittleEndian};
 
 // Generate a binary blob with just # different 4 bytes symbols
 // randomly placed in the file, so it works as a good test bed
 // for files in which RLE is a good compressor!
-pub fn gen_blob_rle(filepath : &str, filesize_bytes : i32, 
-                    symbols_count : i32 /*how many different symbols the file has*/) -> bool
+pub fn gen_blob_rle(filepath : path::PathBuf, filesize_bytes : u32, 
+                    symbols_count : u32 /*how many different symbols the file has*/) -> bool
 {
     // Gen symbol table
 
@@ -38,13 +40,28 @@ pub fn gen_blob_rle(filepath : &str, filesize_bytes : i32,
 }
 
 // Generate a file using random 4 byte symbols
-pub fn gen_random_blob(filepath : &str, filesize_bytes : i32) -> bool
+pub fn gen_random_blob(filepath : path::PathBuf, filesize_bytes : u32) -> bool
 {
+    // open random file for writing
+    let mut random_file = std::fs::File::create(filepath).unwrap();
 
-    return false;
+    // write random data
+    let n_symbols : u32 = filesize_bytes / 4;
+    for s in 0..n_symbols {
+        // generate random 32bit integer
+
+        // write 32bit intiger into 4 8 bit integer array
+        //https://zetok.github.io/tox/byteorder/trait.ByteOrder.html#tymethod.write_u32_into
+        let test_data : [u8; 4] = [0x0, 0x0, 0x0, 0x0];
+
+        // write to file
+        random_file.write(&test_data);
+    }
+
+    return true;
 }
 
-pub fn bin_diff(file1 : &str, file2 : &str) -> bool
+pub fn bin_diff(file1 : path::PathBuf, file2 : path::PathBuf) -> bool
 {
     return false;
 }
