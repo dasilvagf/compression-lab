@@ -30,12 +30,18 @@ mod utils;
 fn main ()
 {
     // Get filepath for current directory
-    let current_dir = env::current_dir();
-    assert_eq!(current_dir.is_ok(), true);
+    //
+    // NOTE: This is not the right way to use unwrap, I should be checking in case of Result
+    // returning an error (what Rust calls panic!), but I'm not going to do this as this is just
+    // a test-bed/research project.
+    let mut filepath_random : path::PathBuf = env::current_dir().unwrap();
+    let mut filepath_rle : path::PathBuf = env::current_dir().unwrap();
 
-    // Set filename to random_blob.bin
-    let mut filepath : path::PathBuf = current_dir.unwrap();
-    filepath.push("random_blob.bin");
-
-    assert_eq!(utils::gen_random_blob(filepath, 1000000 /*1MB*/), true);
+    //
+    // Test
+    //
+    filepath_random.push("random_blob.bin");
+    assert_eq!(utils::gen_random_blob(filepath_random, 1000000 /*1MB*/), true);
+    filepath_rle.push("rle_blob.bin");
+    assert_eq!(utils::gen_rle_blob(filepath_rle, 1000000 /*1MB*/, 10), true);
 }
