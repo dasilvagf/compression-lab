@@ -23,25 +23,43 @@
  */
 use std::env;
 use std::path;
+use std::error::Error;
 
 mod compression_methods;
 mod utils;
 
-fn main ()
+fn main () -> Result<(), Box<dyn Error>>
 {
+    //
+    //              - - Generate Test Files -- 
+    //
+ 
+    /*
     // Get filepath for current directory
-    //
-    // NOTE: This is not the right way to use unwrap, I should be checking in case of Result
-    // returning an error (what Rust calls panic!), but I'm not going to do this as this is just
-    // a test-bed/research project.
-    let mut filepath_random : path::PathBuf = env::current_dir().unwrap();
-    let mut filepath_rle : path::PathBuf = env::current_dir().unwrap();
+    let mut filepath_random : path::PathBuf = env::current_dir()?;
+    let mut filepath_rle : path::PathBuf = env::current_dir()?;
 
-    //
-    // Test
-    //
     filepath_random.push("random_blob.bin");
     assert_eq!(utils::gen_random_blob(filepath_random, 1000000 /*1MB*/), true);
     filepath_rle.push("rle_blob.bin");
     assert_eq!(utils::gen_rle_blob(filepath_rle, 1000000 /*1MB*/, 10), true);
+    */
+
+    //
+    //              0 - Open original file and compress it 
+    // 
+    let mut filepath_rle : path::PathBuf = env::current_dir()?;
+    filepath_rle.push("rle_blob.bin");
+    
+    let original_data : Vec<u8> = utils::open_file(filepath_rle)?;
+    let compressed_data : Vec<u8> = compression_methods::compress(&original_data);
+
+    //
+    //              1 - Uncompress file and test for equality (loss-less)
+    // 
+    let uncompressed_data : Vec<u8> = compression_methods::decompress(&compressed_data);
+    assert_eq!(utils::diff_buffers(uncompressed_data, compressed_data), true);
+    
+    // Yep, we've done it!
+    Ok(())
 }

@@ -21,6 +21,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     =======================================================================
  */
+use std::io;
 use std::io::prelude::*;
 use std::vec;
 use std::path;
@@ -73,3 +74,29 @@ pub fn gen_random_blob(filepath : path::PathBuf, filesize_bytes : u32) -> bool
 
     return true;
 }
+
+pub fn open_file(filepath : path::PathBuf) -> Result<Vec<u8>, io::Error>
+{
+    let mut buffer : Vec<u8> = vec![];
+    
+    // Open file for reading
+    let mut file = std::fs::File::open(filepath)?;
+    file.read_to_end(&mut buffer)?;
+    return Ok(buffer);
+}
+
+// Diff two binary buffers
+pub fn diff_buffers(buffer_0 : Vec<u8>, buffer_1 : Vec<u8>) -> bool
+{
+    assert!(buffer_0.len() > 0 && buffer_1.len() > 0, "Ops! This shouldn't happen: One of our buffer is NULL!");
+
+    // Equal size means they are equal, as makes no sense to compress a file to its original size
+    if buffer_0.len() == buffer_1.len() 
+    {
+        return true;
+    }
+
+
+
+    return false
+} 

@@ -23,16 +23,12 @@
  */
 mod rle;
 
-// Just hinting to the compiler to not worry about this functions not being used at the moment. 
-// I'm going to resolve this later.
-#[allow(dead_code)]
-fn encode()
+pub fn compress(buffer : &Vec<u8>) -> Vec<u8>
 {
-    todo!()
+    return buffer.to_vec();
 }
 
-#[allow(dead_code)]
-fn decode()
+pub fn decompress(buffer : &Vec<u8>) -> Vec<u8>
 {
-    todo!()
+    return buffer.to_vec();
 }
