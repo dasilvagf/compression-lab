@@ -96,7 +96,5 @@ pub fn diff_buffers(buffer_0 : Vec<u8>, buffer_1 : Vec<u8>) -> bool
         return true;
     }
 
-
-
     return false
 } 

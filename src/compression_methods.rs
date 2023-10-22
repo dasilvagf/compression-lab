@@ -25,10 +25,10 @@ mod rle;
 
 pub fn compress(buffer : &Vec<u8>) -> Vec<u8>
 {
-    return buffer.to_vec();
+    return rle::compress(buffer);
 }
 
 pub fn decompress(buffer : &Vec<u8>) -> Vec<u8>
 {
-    return buffer.to_vec();
+    return rle::decompress(buffer);
 }
