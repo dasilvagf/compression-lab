@@ -21,14 +21,4 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     =======================================================================
  */
-mod rle;
-
-pub fn compress(buffer : &Vec<u8>) -> Vec<u8>
-{
-    return rle::compress(buffer);
-}
-
-pub fn decompress(buffer : &Vec<u8>) -> Vec<u8>
-{
-    return rle::decompress(buffer);
-}
+pub mod rle;

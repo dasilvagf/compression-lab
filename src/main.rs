@@ -52,13 +52,14 @@ fn main () -> Result<(), Box<dyn Error>>
     filepath_rle.push("rle_blob.bin");
     
     let original_data : Vec<u8> = utils::open_file(filepath_rle)?;
-    let compressed_data : Vec<u8> = compression_methods::compress(&original_data);
+    let compressed_data : compression_methods::rle::rle_table = 
+        compression_methods::rle::compress(&original_data);
 
     //
     //              1 - Uncompress file and test for equality (loss-less)
     // 
-    let uncompressed_data : Vec<u8> = compression_methods::decompress(&compressed_data);
-    assert_eq!(utils::diff_buffers(uncompressed_data, compressed_data), true);
+    let uncompressed_data : Vec<u8> = compression_methods::rle::decompress(&compressed_data);
+    assert_eq!(utils::diff_buffers(uncompressed_data, original_data), true);
     
     // Yep, we've done it!
     Ok(())
