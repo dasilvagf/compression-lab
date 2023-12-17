@@ -21,6 +21,11 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     =======================================================================
  */
+
+// Handle warnings I don't care about
+#![allow(unused)] 
+#![allow(non_camel_case_types)] 
+
 use std::env;
 use std::path;
 use std::error::Error;

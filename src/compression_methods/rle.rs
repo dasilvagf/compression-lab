@@ -28,6 +28,11 @@ pub struct rle_table
     runlenght_table : Vec<u16>
 }
 
+fn get_u32_from_bytes(index : &u32, array : &[T]) -> u32
+{
+
+}
+
 // Burrows–Wheeler transform
 fn apply_bwt(mut buffer : &Vec<u8>)
 {
@@ -49,13 +54,13 @@ pub fn compress(buffer : &Vec<u8>) -> rle_table
     // in the byte array it means it doesn't repeat at the moment in the original file.
     let mut run_lengths : Vec<u16> = Vec::new();
     let mut bytes : Vec<u8> = Vec::new();
-    
-    //
+ 
     // Run through the entire file and compress ...
-    //
+    let mut curr_symbol : u32 = u32::from_le_bytes(raw_data);
     let mut current_byte : u8 = raw_data[0];
+
     let mut current_count : u16 = 1;
-    for i in 1 .. raw_data.len(){
+    for i in 0 .. (raw_data.len() / 4){
         if current_byte == raw_data[i]
         {   // increment count, we just found the same byte adjancent to our current
             current_count += 1;
@@ -88,8 +93,12 @@ pub fn compress(buffer : &Vec<u8>) -> rle_table
     //
     let original_size_bytes : u32 = raw_data.len().try_into().unwrap();
     let compressed_size_bytes : u32 = (bytes.len() + (2 * run_lengths.len())).try_into().unwrap();
-
-
+ 
+    println!("RLE Encoding Statistics");
+    println!("Original Size (bytes): {}", original_size_bytes);
+    println!("Compressed Size (bytes): {}", compressed_size_bytes);
+    println!("Compression Ratio: {}%", 100.0*((compressed_size_bytes as f32)/(original_size_bytes as f32)));
+    
     return compressed_data;
 }
 

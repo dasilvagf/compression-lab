@@ -90,6 +90,7 @@ pub fn diff_buffers(buffer_0 : Vec<u8>, buffer_1 : Vec<u8>) -> bool
 {
     assert!(buffer_0.len() > 0 && buffer_1.len() > 0, "Ops! This shouldn't happen: One of our buffer is NULL!");
 
+    // println!("diff_size - buffer0 size: {} buffer1 size: {}", buffer_0.len(), buffer_1.len());
     // Equal size means they are equal, as makes no sense to compress a file to its original size
     if buffer_0.len() == buffer_1.len() 
     {
