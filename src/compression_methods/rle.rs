@@ -25,12 +25,19 @@
 pub struct rle_table
 {
     byte_table : Vec<u8>,
-    runlenght_table : Vec<u16>
+    runlenght_table : Vec<u32>
 }
 
-fn get_u32_from_bytes(index : &u32, array : &[T]) -> u32
+fn get_u32_from_bytes(index : usize, buffer : &Vec<u8>) -> u32
 {
+    let raw_bytes = [buffer[index as usize], buffer[(index + 1) as usize], buffer[(index + 2) as usize], buffer[(index + 3) as usize]];
+ /*   let mut raw_bytes : [u8; 4] = [0x0, 0x0, 0x0, 0x0];
+    raw_bytes[0] = buffer[index as usize];
+    raw_bytes[1] = buffer[(index + 1) as usize];
+    raw_bytes[2] = buffer[(index + 2) as usize];
+    raw_bytes[3] = buffer[(index + 3) as usize]; */
 
+    return u32::from_ne_bytes(raw_bytes);
 }
 
 // Burrows–Wheeler transform
@@ -52,16 +59,18 @@ pub fn compress(buffer : &Vec<u8>) -> rle_table
     // another one with the bytes theyselfs (bytes). Each time a byte has a run length count
     // it will be repeated 2 times in the bytes array. So, if a byte is single at the point
     // in the byte array it means it doesn't repeat at the moment in the original file.
-    let mut run_lengths : Vec<u16> = Vec::new();
+    let mut run_lengths : Vec<u32> = Vec::new();
     let mut bytes : Vec<u8> = Vec::new();
  
     // Run through the entire file and compress ...
-    let mut curr_symbol : u32 = u32::from_le_bytes(raw_data);
-    let mut current_byte : u8 = raw_data[0];
+    //let mut current_byte : u8 = raw_data[0];
+    let mut current_count : u32 = 1;
+    let mut current_symbol : u32 = get_u32_from_bytes(0, buffer);
 
-    let mut current_count : u16 = 1;
-    for i in 0 .. (raw_data.len() / 4){
-        if current_byte == raw_data[i]
+    for i in (4 .. (raw_data.len() - 1)).step_by(4){
+        let mut data : u32 = get_u32_from_bytes(i, buffer);
+
+        if current_symbol == data
         {   // increment count, we just found the same byte adjancent to our current
             current_count += 1;
         }
@@ -69,18 +78,18 @@ pub fn compress(buffer : &Vec<u8>) -> rle_table
         {   // We found a new symbol. Therefore, we update our data tables
             if current_count >= 2
             {
-                bytes.push(current_byte);
-                bytes.push(current_byte);
+                bytes.extend(current_symbol.to_be_bytes().to_vec());
+                bytes.extend(current_symbol.to_be_bytes().to_vec());
                 run_lengths.push(current_count);
             }
             else
             {
-                bytes.push(current_byte);
+                bytes.extend(current_symbol.to_be_bytes().to_vec());
             }
 
             // Update state
-            current_byte = raw_data[i];
-            current_count = 1;
+            current_symbol = data;
+            current_count = 0;
         }
     }
 
