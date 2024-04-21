@@ -25,7 +25,9 @@ use std::io;
 use std::io::prelude::*;
 use std::vec;
 use std::path;
+
 use rand::prelude::*;
+use bmp;
 
 // NOTE: Both functions in here ignore error handling for the file writing.
 
@@ -99,3 +101,26 @@ pub fn diff_buffers(buffer_0 : Vec<u8>, buffer_1 : Vec<u8>) -> bool
 
     return false
 } 
+
+pub fn open_bmp(filepath : path::PathBuf) -> Result<Vec<u8>, io::Error>
+{
+    let mut buffer : Vec<u8> = vec![];
+
+    let img = bmp::open(filepath).unwrap_or_else(|e| {
+    panic!("Failed to open: {}", e);});
+
+    // go through the pixel array
+    for h in 0..(img.get_height() - 1) {
+        for w in 0..(img.get_width() - 1){
+            let mut pixel : bmp::Pixel = img.get_pixel(w, h);
+
+            buffer.push(pixel.r);
+            buffer.push(pixel.g);
+            buffer.push(pixel.b);
+            buffer.push(0xFF); // the alpha is igored
+        }
+    }
+
+    return Ok(buffer);
+}
+

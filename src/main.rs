@@ -54,9 +54,9 @@ fn main () -> Result<(), Box<dyn Error>>
     //              0 - Open original file and compress it 
     // 
     let mut filepath_rle : path::PathBuf = env::current_dir()?;
-    filepath_rle.push("render_test.bmp");
-    
-    let original_data : Vec<u8> = utils::open_file(filepath_rle)?;
+    filepath_rle.push("render_test_24bits.bmp");
+
+    let original_data : Vec<u8> = utils::open_bmp(filepath_rle)?;
     let compressed_data : compression_methods::rle::rle_table = 
         compression_methods::rle::compress(&original_data);
 

@@ -31,12 +31,6 @@ pub struct rle_table
 fn get_u32_from_bytes(index : usize, buffer : &Vec<u8>) -> u32
 {
     let raw_bytes = [buffer[index as usize], buffer[(index + 1) as usize], buffer[(index + 2) as usize], buffer[(index + 3) as usize]];
- /*   let mut raw_bytes : [u8; 4] = [0x0, 0x0, 0x0, 0x0];
-    raw_bytes[0] = buffer[index as usize];
-    raw_bytes[1] = buffer[(index + 1) as usize];
-    raw_bytes[2] = buffer[(index + 2) as usize];
-    raw_bytes[3] = buffer[(index + 3) as usize]; */
-
     return u32::from_ne_bytes(raw_bytes);
 }
 
@@ -48,6 +42,9 @@ fn apply_bwt(mut buffer : &Vec<u8>)
 
 pub fn compress(buffer : &Vec<u8>) -> rle_table
 {
+    // only accept files multiple of 4 bytes
+    assert_eq!(buffer.len() % 4, 0, "This file length IS NOT multiple of 4");
+
     //
     // Apply BWT to the orignal file
     //
@@ -67,7 +64,7 @@ pub fn compress(buffer : &Vec<u8>) -> rle_table
     let mut current_count : u32 = 1;
     let mut current_symbol : u32 = get_u32_from_bytes(0, buffer);
 
-    for i in (4 .. (raw_data.len() - 1)).step_by(4){
+    for i in (3 .. (raw_data.len() - 1)).step_by(4){
         let mut data : u32 = get_u32_from_bytes(i, buffer);
 
         if current_symbol == data
@@ -101,12 +98,12 @@ pub fn compress(buffer : &Vec<u8>) -> rle_table
     // Print statical status
     //
     let original_size_bytes : u32 = raw_data.len().try_into().unwrap();
-    let compressed_size_bytes : u32 = (bytes.len() + (2 * run_lengths.len())).try_into().unwrap();
+    let compressed_size_bytes : u32 = (bytes.len() + (4 * run_lengths.len())).try_into().unwrap();
  
     println!("RLE Encoding Statistics");
-    println!("Original Size (bytes): {}", original_size_bytes);
-    println!("Compressed Size (bytes): {}", compressed_size_bytes);
-    println!("Compression Ratio: {}%", 100.0*((compressed_size_bytes as f32)/(original_size_bytes as f32)));
+    println!("Original Size : {} Mb", (original_size_bytes as f32)/(1e6));
+    println!("Compressed Size : {} Mb", (compressed_size_bytes as f32)/(1e6));
+    println!("Compression Ratio: {}% smaller than the original size", 100.0*((original_size_bytes as f32)/(compressed_size_bytes as f32)));
     
     return compressed_data;
 }
