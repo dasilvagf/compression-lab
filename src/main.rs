@@ -64,7 +64,7 @@ fn main () -> Result<(), Box<dyn Error>>
     //              1 - Uncompress file and test for equality (loss-less)
     // 
     let uncompressed_data : Vec<u8> = compression_methods::rle::decompress(&compressed_data);
-    //assert_eq!(utils::diff_buffers(uncompressed_data, original_data), true);
+    assert_eq!(utils::diff_buffers(uncompressed_data, original_data), true, "Diffing the binaries, to see if they match!");
     
     // Yep, we've done it!
     Ok(())

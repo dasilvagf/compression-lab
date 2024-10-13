@@ -110,5 +110,38 @@ pub fn compress(buffer : &Vec<u8>) -> rle_table
 
 pub fn decompress(buffer : &rle_table) -> Vec<u8>
 {
-    return buffer.byte_table.to_vec();
+    // Original data (loss-less)
+    let mut original_data : Vec<u8> = Vec::new();
+
+    let mut byte_table : Vec<u8> = buffer.byte_table.to_vec();
+    let mut rle_table : Vec<u32> = buffer.runlenght_table.to_vec();
+
+    // Walk through the bytes array, if we find 2 equal symbols (4 bytes) we look into the RLE array
+    let bytes_len : usize = byte_table.len() - 1;
+    for i in (0 .. bytes_len).step_by(4){
+        
+        // Get first symbol in the array
+        let data_0 : u32 = get_u32_from_bytes(i, &byte_table);
+        original_data.extend(data_0.to_be_bytes().to_vec());
+
+        // Check to see if this symbol is compressed
+        if (i + 4) < bytes_len
+        {
+            // Do we have a sequence of symbols?
+            let data_1 : u32 = get_u32_from_bytes(i + 4, &byte_table);
+            if (data_0 == data_1)
+            {
+                // add second symbol
+                original_data.extend(data_1.to_be_bytes().to_vec());
+
+                // Decompress ...
+                let rle_len : usize = byte_table.len() - 1;
+                for j in (0 .. rle_len - 1){
+
+                }
+            }
+        }
+    }
+
+    return original_data;
 }
