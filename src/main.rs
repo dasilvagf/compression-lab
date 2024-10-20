@@ -3,7 +3,7 @@
                                 COMPRESSION LAB
     
     Compilation of loss-less compression algorithms written in Rust for 
-    fun and learning propourses
+   fun and learning propourses
 
     Copyright (C) <2023>  <Gabriel da Silva>
 
@@ -41,6 +41,7 @@ fn main () -> Result<(), Box<dyn Error>>
  
     /*
     // Get filepath for current directory
+    //
     let mut filepath_random : path::PathBuf = env::current_dir()?;
     let mut filepath_rle : path::PathBuf = env::current_dir()?;
 
