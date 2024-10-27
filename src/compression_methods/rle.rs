@@ -86,7 +86,7 @@ pub fn compress(buffer : &Vec<u8>) -> rle_table
 
             // Update state
             current_symbol = data;
-            current_count = 0;
+            current_count = 1;
         }
     }
 
@@ -100,11 +100,13 @@ pub fn compress(buffer : &Vec<u8>) -> rle_table
     let original_size_bytes : u32 = raw_data.len().try_into().unwrap();
     let compressed_size_bytes : u32 = (bytes.len() + (4 * run_lengths.len())).try_into().unwrap();
  
+    println!("\n************************************************************************");
     println!("RLE Encoding Statistics");
     println!("Original Size : {} Mb", (original_size_bytes as f32)/(1e6));
     println!("Compressed Size : {} Mb", (compressed_size_bytes as f32)/(1e6));
     println!("Compression Ratio: {}% smaller than the original size", 100.0*((original_size_bytes as f32)/(compressed_size_bytes as f32)));
-    
+    println!("************************************************************************\n");
+   
     return compressed_data;
 }
 
@@ -112,15 +114,15 @@ pub fn decompress(buffer : &rle_table) -> Vec<u8>
 {
     // Original data (loss-less)
     let mut original_data : Vec<u8> = Vec::new();
-
     let mut byte_table : Vec<u8> = buffer.byte_table.to_vec();
     let mut rle_table : Vec<u32> = buffer.runlenght_table.to_vec();
 
     // Walk through the bytes array, if we find 2 equal symbols (4 bytes) we look into the RLE array
     let bytes_len : usize = byte_table.len() - 1;
-    for i in (0 .. bytes_len).step_by(4){
+    let mut rle_index : usize = 0;
+    for mut i in (0 .. bytes_len).step_by(4){
         
-        // Get first symbol in the array
+        // Get symbol first occurence
         let data_0 : u32 = get_u32_from_bytes(i, &byte_table);
         original_data.extend(data_0.to_be_bytes().to_vec());
 
@@ -131,13 +133,13 @@ pub fn decompress(buffer : &rle_table) -> Vec<u8>
             let data_1 : u32 = get_u32_from_bytes(i + 4, &byte_table);
             if (data_0 == data_1)
             {
-                // add second symbol
-                original_data.extend(data_1.to_be_bytes().to_vec());
+                // skip the repeated symbol
+                i += 4;
 
                 // Decompress ...
-                let rle_len : usize = byte_table.len() - 1;
-                for j in (0 .. rle_len - 1){
-
+                let rle_len : u32 = rle_table[rle_index]; rle_index += 1;
+                for j in (1 .. rle_len){
+                    original_data.extend(data_1.to_be_bytes().to_vec());
                 }
             }
         }

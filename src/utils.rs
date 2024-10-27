@@ -91,12 +91,24 @@ pub fn open_file(filepath : path::PathBuf) -> Result<Vec<u8>, io::Error>
 pub fn diff_buffers(buffer_0 : Vec<u8>, buffer_1 : Vec<u8>) -> bool
 {
     assert!(buffer_0.len() > 0 && buffer_1.len() > 0, "Ops! This shouldn't happen: One of our buffer is NULL!");
-
-    // println!("diff_size - buffer0 size: {} buffer1 size: {}", buffer_0.len(), buffer_1.len());
-    // Equal size means they are equal, as makes no sense to compress a file to its original size
+    
+    // The buffers should have the same size
     if buffer_0.len() == buffer_1.len() 
     {
+        for i in 0..buffer_0.len(){
+            // if a byte is different, then the file is not equal
+            if (buffer_0[i] != buffer_1[i])
+            {
+                println!("ERROR: the values at index {} are different: - buffer0: {} buffer1: {}", i, buffer_0.len(), buffer_1.len());
+                return false;
+            }
+        }
+
         return true;
+    }
+    else
+    {
+        println!("ERROR: the buffers have different sizes: - buffer0: {} buffer1: {}", buffer_0.len(), buffer_1.len());
     }
 
     return false
